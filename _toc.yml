@@ -4,8 +4,11 @@
 format: jb-book
 root: README.md
 parts:
-  - caption: Pendahuluan
+  - caption: Daftar isi
     chapters:
     - file: notebooks/01-pendahuluan
       sections:
-      - file: 01-1-bilangan_floating-point
+      - file: notebooks/01-1-bilangan_floating-point
+  - caption: referensi
+    chapters:
+    - file: references.md
