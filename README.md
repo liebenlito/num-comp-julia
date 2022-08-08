@@ -1,1 +1,1 @@
-# num-comp-julia
+# Numerical Computation dengan Julia
