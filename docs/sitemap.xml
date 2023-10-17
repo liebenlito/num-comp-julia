@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="http://localhost:3001/sitemap_style.xsl" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://localhost:3001</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/bilangan-floating-point</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/taylor-polynomial-1</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/interpolasi</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/poly-lagrange</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/error-in-interpolation</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/julia-cheatsheet</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3001/references</loc>
+  </url>
+</urlset>
