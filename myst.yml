@@ -1,18 +1,15 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
-  # title:
+  title: Metode Numerik dengan Julia
   # description:
   keywords: []
-  authors: []
+  authors: [Muhaza Liebenlito]
   github: https://github.com/liebenlito/num-comp-julia
   # bibliography: []
 site:
   template: book-theme
-  # title:
-  # logo:
+  title: Metode Numerik dengan Julia
+  logo: logo.png
   nav: []
-  actions:
-    - title: Learn More
-      url: https://mystmd.org/guide
   domains: []

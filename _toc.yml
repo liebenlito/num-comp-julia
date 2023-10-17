@@ -6,9 +6,12 @@ root: README.md
 parts:
   - caption: Daftar isi
     chapters:
-    - file: notebooks/01-pendahuluan
-      sections:
-      - file: notebooks/01-1-bilangan_floating-point
-  - caption: referensi
+    - file: notebooks/pertemuan_2/bilangan_floating-point
+    - file: notebooks/pertemuan_4/taylor_polynomial_1
+    - file: notebooks/pertemuan_4.1/interpolasi
+    - file: notebooks/pertemuan_5/poly_lagrange
+    - file: notebooks/pertemuan_6/error_in_interpolation
+    - file: notebooks/Julia cheatsheet
+  - caption: Referensi
     chapters:
     - file: references.md
