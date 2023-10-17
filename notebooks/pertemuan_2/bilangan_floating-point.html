@@ -1,0 +1,823 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Sistem Bilangan Floating-Point &#8212; Metode Numerik dengan Julia</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Implementasi pseudo-code ke dalam Julia" href="../pertemuan_4/taylor_polynomial_1.html" />
+    <link rel="prev" title="Soon.." href="../../README.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Metode Numerik dengan Julia</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    Soon..
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Daftar isi
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Sistem Bilangan Floating-Point
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_4/taylor_polynomial_1.html">
+   Implementasi pseudo-code ke dalam Julia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_4.1/interpolasi.html">
+   Interpolasi
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_5/poly_lagrange.html">
+   Polynomial Lagrange
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_6/error_in_interpolation.html">
+   Error di Interpolasi Polynomial
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Julia%20cheatsheet.html">
+   Pertemuan 1
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Referensi
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../references.html">
+   Referensi
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/notebooks/pertemuan_2/bilangan_floating-point.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fnotebooks/pertemuan_2/bilangan_floating-point.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/notebooks/pertemuan_2/bilangan_floating-point.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#presisi-dan-akurasi">
+   Presisi dan Akurasi
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#double-precision">
+   Double precision
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Sistem Bilangan Floating-Point</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#presisi-dan-akurasi">
+   Presisi dan Akurasi
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#double-precision">
+   Double precision
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="sistem-bilangan-floating-point">
+<h1>Sistem Bilangan Floating-Point<a class="headerlink" href="#sistem-bilangan-floating-point" title="Permalink to this headline">#</a></h1>
+<p>Himpunan bilangan real <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> tak berhingga, karena ia tidak terbatas dan kontinu. Secara komputasi, istilah tak behingga tidak mungkin ditemui. Salah satu sifat yang harus dimiliki oleh suatu algoritma secara adalah keberhinggaan (finiteness). Oleh karena itu, kita perlu mengetahui suatu himpunan berhingga yang dapat dijalankan oleh komputer (sebagai alat komputasi) yang dapat merepresentasikan bilangan real tersebut.</p>
+<div class="highlight-{prf:definition}Bilangan notranslate"><div class="highlight"><pre><span></span>:label: definisi_1
+Himpunan __bilangan floating-point__ $\mathbb{F}$ terdiri dari nilai nol dan semua bilangan yang dibentuk dari
+
+$$
+\pm (1+f) \times 2^n,
+$$ (eqn:1-1)
+
+dimana $n$ adalah bilangan bulat yang disebut dengan __eksponen__, dan $1+f$ adalah __matissa__ atau __significand__, dengan
+
+$$
+f = \sum_{i=1}^{d} b_i 2^{-i}, \hspace{1em} b_i \in \{0, 1\},
+$$ (eqn:1-2)
+
+dan bilangan bulat $d$ disebut dengan __presisi__.
+</pre></div>
+</div>
+<p>Persamaan <code class="xref eq docutils literal notranslate"><span class="pre">eqn:1-2</span></code> merepresentasikan <strong>significand</strong> dengan bilangan di interval <span class="math notranslate nohighlight">\([1, 2)\)</span> dalam bentuk basis-2. Secara ekuivalen,</p>
+<div class="math notranslate nohighlight" id="equation-eqn-1-3">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eqn-1-3" title="Permalink to this equation">#</a></span>\[
+f = 2^{-d} \sum_{i=1}^{d} b_i 2^{d-i} = 2^{-d}z,
+\]</div>
+<p>untuk suatu bilangan bulat <span class="math notranslate nohighlight">\(z\)</span> di himpunan <span class="math notranslate nohighlight">\(\{ 0, 1, \cdots, 2^d - 1\}\)</span>. Konsekunsinya, mulai dari <span class="math notranslate nohighlight">\(2^n\)</span> dan berakhir sebelum <span class="math notranslate nohighlight">\(2^{n+1}\)</span>, maka terdapat tepat <span class="math notranslate nohighlight">\(2^d\)</span> <strong>evenly spaced numbers</strong> yang dimiliki oleh <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p>
+<p>Dari sini kita dapatkan fakta bahwa anggota terkecil dari <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> yang lebih besar dari <span class="math notranslate nohighlight">\(1\)</span> yaitu <span class="math notranslate nohighlight">\(1 + 2^{-d}\)</span> dan dapat kita sebut sebagai <strong>machine epsilon</strong>.</p>
+<p>Kita definisikan fungsi pembulatan <span class="math notranslate nohighlight">\(\text{fl}(x)\)</span> yang memetakan bilangan real <span class="math notranslate nohighlight">\(x\)</span> ke anggota terdekat <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>. Jarak antar bilangan floating-point di <span class="math notranslate nohighlight">\([2^n, 2^{n+1})\)</span> adalah <span class="math notranslate nohighlight">\(2^n \epsilon_{\text{mach}} = 2^{n-d}\)</span>. Dengan demikian, untuk setiap bilangan real <span class="math notranslate nohighlight">\(x \in [2^n, 2^{n+1})\)</span>, jarak anggota di <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> tidak akan lebih dari <span class="math notranslate nohighlight">\(2^{n-d-1}\)</span>. Sehingga, kita dapat simpulkan bahwa <span class="math notranslate nohighlight">\(\lvert \text{fl}(x) - x \rvert \leq \frac{1}{2} (2^{n-d})\)</span>. Ini berarti</p>
+<div class="math notranslate nohighlight" id="equation-fl-bounded">
+<span class="eqno">(2)<a class="headerlink" href="#equation-fl-bounded" title="Permalink to this equation">#</a></span>\[\frac{\lvert \text{fl}(x) - x \rvert}{|x|} \leq \frac{2^{n-d-1}}{2^n} \leq \frac{1}{2} \epsilon_{\text{mach}}.\]</div>
+<p>Persamaan <a class="reference external" href="#fl_bounded"></a> juga berlaku untuk <span class="math notranslate nohighlight">\(x\)</span> yang bernilai negatif. Pernyataan berikut ini ekivalen dengan <a class="reference external" href="#fl_bounded"></a>.</p>
+<div class="math notranslate nohighlight" id="equation-ekui-fl-bounded">
+<span class="eqno">(3)<a class="headerlink" href="#equation-ekui-fl-bounded" title="Permalink to this equation">#</a></span>\[\text{fl}(x) = x(1+\epsilon), \hspace{1em} \text{untuk } |\epsilon| \leq \frac{1}{2} \epsilon_{\text{mach}}.\]</div>
+<p>Berdasarkan <a class="reference external" href="#ekui_fl_bounded"></a>, kita dapat mengatakan bahwa nilai <span class="math notranslate nohighlight">\(\epsilon\)</span> bergantung pada <span class="math notranslate nohighlight">\(x\)</span>,</p>
+<section id="presisi-dan-akurasi">
+<h2>Presisi dan Akurasi<a class="headerlink" href="#presisi-dan-akurasi" title="Permalink to this headline">#</a></h2>
+<p>Untuk lebih mempermudah kita gunakan bilangan desimal (basis 10):</p>
+<div class="math notranslate nohighlight" id="equation-eqn-1-7">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eqn-1-7" title="Permalink to this equation">#</a></span>\[
+\pm \left( b_0 + \sum_{i=1}^{d} b_i 10^{-i}\right) \times 10^n = \pm(b_0. b_1b_2 \cdots b_d) \times 10^n,
+\]</div>
+<p>dimana setiap <span class="math notranslate nohighlight">\(b_i \in \{ 0, 1,  \cdots, 9 \}\)</span> dan <span class="math notranslate nohighlight">\(b_0 \neq 0\)</span>. Ini secara sederhana disebut dengan <strong>notasi saintifik</strong> dengan <span class="math notranslate nohighlight">\(d+1\)</span> <strong>significant digit</strong>. Contohnya, konstanta Planck adalah <span class="math notranslate nohighlight">\(6.626068 \times 10^{-34}\text{ m}^2. \text{kg}/\text{sec}\)</span> dan memiliki tujuh significant digit. Jika kita ganti digit terakhir dari konstanta tersebut dari <span class="math notranslate nohighlight">\(8\)</span> ke <span class="math notranslate nohighlight">\(9\)</span>, maka perubahan relatifnya adalah</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{0.000001 \times 10^{-34}}{6.626068 \times 10^{-34}} \approx 1.51 \times 10^{-7}.
+\]</div>
+<p>Dengan demikian kita dapat katakan bahwa konstanta tersebut memiliki presisi 7 digit desimal. Setiap hasil yang direpresentasikan menggunakan <span class="math notranslate nohighlight">\(d\)</span> binary digit, tapi tidak semua digit tersebut dengan akurat merepresentasikan suatu nilai. Misalkan <span class="math notranslate nohighlight">\(x\)</span> adalah bilangan yg ingin direpresentasikan, <span class="math notranslate nohighlight">\(\hat{x}\)</span> adalah aproksimasinya. <strong>Akurasi absolut</strong> dari <span class="math notranslate nohighlight">\(\hat{x}\)</span> adalah</p>
+<div class="math notranslate nohighlight">
+\[
+|x-\hat{x}|,
+\]</div>
+<p>dan <strong>akurasi relatif</strong> adalah</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{|x-\hat{x}|}{|x|}.
+\]</div>
+<p>Kita bisa mengekspresikan akurasi relatif untuk menentukan <strong>banyaknya digit yang akurat</strong>, dihitung dalam basis 10</p>
+<div class="math notranslate nohighlight">
+\[
+-\log_{10} \frac{|x-\hat{x}|}{x}.
+\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nd">@show</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">22</span><span class="o">/</span><span class="mi">7</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p = 22 / 7 = 3.142857142857143
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.142857142857143
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nd">@show</span><span class="w"> </span><span class="n">float</span><span class="p">(</span><span class="nb">pi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>float(pi) = 3.141592653589793
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.141592653589793
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">accuracy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">pi</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;akurasi absolut = </span><span class="si">$accuracy</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;akurasi relatif = </span><span class="si">$</span><span class="p">(</span><span class="n">accuracy</span><span class="o">/</span><span class="nb">pi</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>akurasi absolut = 0.0012644892673496777
+akurasi relatif = 0.0004024994347707008
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">digit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">floor</span><span class="p">(</span><span class="o">-</span><span class="n">log10</span><span class="p">(</span><span class="n">accuracy</span><span class="o">/</span><span class="nb">pi</span><span class="p">))</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Banyaknya digit yang akurat = </span><span class="si">$digit</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Banyaknya digit yang akurat = 3.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="double-precision">
+<h2>Double precision<a class="headerlink" href="#double-precision" title="Permalink to this headline">#</a></h2>
+<p>Hampir semua komputasi numerik menggunakan standar <strong>IEEE 754</strong>. <strong>Single precision</strong> dengan <span class="math notranslate nohighlight">\(d=23\)</span> dan <strong>double precision</strong> dengan <span class="math notranslate nohighlight">\(d=52\)</span>. Di double precision,</p>
+<div class="math notranslate nohighlight">
+\[
+\epsilon_{\text{mach}} = 2^{-52} \approx 2.2 \times 10^{-16}.
+\]</div>
+<p>Kita dapat mengatakan bahwa bilangan floating-point double precision memiliki 16 digit desimal.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nd">@show</span><span class="w"> </span><span class="n">typeof</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="nd">@show</span><span class="w"> </span><span class="n">typeof</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>typeof(1) = Int64
+typeof(1.0) = Float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">bitstring</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&quot;0011111111110000000000000000000000000000000000000000000000000000&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">bitstring</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span><span class="w"> </span><span class="n">bitstring</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{String}:
+ &quot;0011111111110000000000000000000000000000000000000000000000000000&quot;
+ &quot;1011111111110000000000000000000000000000000000000000000000000000&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="nd">@show</span><span class="w"> </span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">exponent</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">significand</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(sign(x), exponent(x), significand(x)) = (1.0, 0, 1.0)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.25</span>
+<span class="nd">@show</span><span class="w"> </span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">exponent</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">significand</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(sign(x), exponent(x), significand(x)) = (1.0, -2, 1.0)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1.0, -2, 1.0)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="mf">0.25</span>
+<span class="nd">@show</span><span class="w"> </span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">exponent</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">significand</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(sign(x), exponent(x), significand(x)) = (-1.0, -2, -1.0)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-1.0, -2, -1.0)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.220446049250313e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">log2</span><span class="p">(</span><span class="n">eps</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-52.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="p">(</span><span class="mf">1.618</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.220446049250313e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span><span class="p">(</span><span class="mf">161.8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.842170943040401e-14
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">nextfloat</span><span class="p">(</span><span class="mf">161.8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>161.80000000000004
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nd">@show</span><span class="w"> </span><span class="n">floatmin</span><span class="p">(),</span><span class="w"> </span><span class="n">floatmax</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(floatmin(), floatmax()) = (2.2250738585072014e-308, 1.7976931348623157e308)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="o">/</span><span class="mi">7</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.14285714285714285
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="mf">37.3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>38.3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0625
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nd">@show</span><span class="w"> </span><span class="mf">5.0</span><span class="p">,</span><span class="w"> </span><span class="kt">Int</span><span class="p">(</span><span class="mf">5.0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(5.0, Int(5.0)) = (5.0, 5)
+</pre></div>
+</div>
+</div>
+</div>
+<p>penjelasan mengenai floating-point di Julia dapat dilihat di <a class="reference external" href="https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/">Manual Julia: Floating point numbers</a>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.9"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.9",
+            path: "./notebooks/pertemuan_2"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.9'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../../README.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Soon..</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../pertemuan_4/taylor_polynomial_1.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Implementasi pseudo-code ke dalam Julia</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Muhaza Liebenlito<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
