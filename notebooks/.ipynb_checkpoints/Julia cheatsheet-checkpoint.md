@@ -3,9 +3,9 @@ exports:
   - format: pdf
     template: egu_copernicus
 ---
-# Pertemuan 1
+# Pengenalan Julia
 
-## Beberapa Cara Menjalankan Julia
+# Beberapa Cara Menjalankan Julia
 
 ### Kenapa Julia?
 Julia adalah bahasa pemrograman yang dikhususkan untuk mengimplementasikan algoritma-algoritma di bidang scientific computing. Sama halnya dengan pemrograman Python, Julia digolongkan ke dalam [bahasa interpreter](https://www.freecodecamp.org/news/compiled-versus-interpreted-languages/) yang berarti syntax-nya tidak serumit bahasa compiler seperti C/C++. Perbedaan yang signifikan antara Python dan Julia adalah performa komputasinya. Seperti yang terlihat pada [](#performance-julia), Julia mengungguli Python pada operasi perkalian matriks-vektor dan semakin besar ukuran matriksnya maka selisihnya akan semakin jauh.
@@ -67,7 +67,6 @@ Tampilan Jupyter Lab di Browser.
 ## Dasar-Dasar Julia
 
 :::{list-table}
-:width: 15 100
 :header-rows: 1
 
 *   - Item/Reference
@@ -93,7 +92,6 @@ Tampilan Jupyter Lab di Browser.
 ## Input dan Output
 
 :::{list-table}
-:width: 50 50 30
 :header-rows: 1
 
 *   - 
@@ -137,7 +135,6 @@ Tampilan Jupyter Lab di Browser.
 ## Operator
 
 :::{list-table}
-:width: 50 50
 :header-rows: 1
 
 *   - 
@@ -157,7 +154,6 @@ Tampilan Jupyter Lab di Browser.
 ## Error
 
 :::{list-table}
-:width: 50 50
 :header-rows: 1
 
 *   - Pesan
@@ -179,7 +175,6 @@ Tampilan Jupyter Lab di Browser.
 ## Iterasi
 
 :::{list-table}
-:width: 50 50
 :header-rows: 1
 
 *   - 
@@ -197,7 +192,6 @@ Tampilan Jupyter Lab di Browser.
 ## Vektor, Matriks, dan Array
 
 :::{list-table}
-:width: 50 50 30
 :header-rows: 1
 
 *   - 
@@ -245,7 +239,6 @@ Tampilan Jupyter Lab di Browser.
 ## Grafik
 
 :::{list-table}
-:width: 50 50 30
 :header-rows: 1
 
 *   - 
