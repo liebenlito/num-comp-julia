@@ -10,7 +10,7 @@ parts:
     - file: notebooks/pertemuan_2/bilangan_floating-point
       title: Sistem Bilangan Floating-Point
     - file: notebooks/pertemuan_4/taylor_polynomial_1
-      title: Polynomial Taylor 
+      title: Algoritma dan Pseudocode dengan Julia 
     - file: notebooks/pertemuan_5.1/interpolasi-Copy1
       title: Masalah Interpolasi dan Interpolasi Polynomial
     - file: notebooks/pertemuan_5/poly_lagrange
