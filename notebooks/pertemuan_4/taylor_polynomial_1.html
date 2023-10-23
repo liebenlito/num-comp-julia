@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Implementasi pseudo-code ke dalam Julia &#8212; Metode Numerik dengan Julia</title>
+    <title>2. Implementasi pseudo-code ke dalam Julia &#8212; Metode Numerik dengan Julia</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -54,8 +54,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Interpolasi" href="../pertemuan_5.1/interpolasi-Copy1.html" />
-    <link rel="prev" title="Sistem Bilangan Floating-Point" href="../pertemuan_2/bilangan_floating-point.html" />
+    <link rel="next" title="3. Interpolasi" href="../pertemuan_5.1/interpolasi-Copy1.html" />
+    <link rel="prev" title="1. Sistem Bilangan Floating-Point" href="../pertemuan_2/bilangan_floating-point.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -123,27 +123,32 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../pertemuan_2/bilangan_floating-point.html">
-   Sistem Bilangan Floating-Point
+   1. Sistem Bilangan Floating-Point
   </a>
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   Implementasi pseudo-code ke dalam Julia
+   2. Polynomial Taylor
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../pertemuan_5.1/interpolasi-Copy1.html">
-   Interpolasi
+   3. Masalah Interpolasi dan Interpolasi Polynomial
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../pertemuan_5/poly_lagrange.html">
-   Polynomial Lagrange
+   4. Interpolasi Lagrange
   </a>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="../pertemuan_6/error_in_interpolation.html">
-   Error di Interpolasi Polynomial
+   5. Error dalam Interpolasi
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_6/interpolasi_chebyshev.html">
+   6. Chebyshev Nodes
   </a>
  </li>
 </ul>
@@ -378,7 +383,7 @@ title="Print to PDF"
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#contoh-1">
-   Contoh 1
+   2.1. Contoh 1
   </a>
  </li>
 </ul>
@@ -402,7 +407,7 @@ title="Print to PDF"
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#contoh-1">
-   Contoh 1
+   2.1. Contoh 1
   </a>
  </li>
 </ul>
@@ -416,9 +421,9 @@ title="Print to PDF"
               <div>
                 
   <section class="tex2jax_ignore mathjax_ignore" id="implementasi-pseudo-code-ke-dalam-julia">
-<h1>Implementasi pseudo-code ke dalam Julia<a class="headerlink" href="#implementasi-pseudo-code-ke-dalam-julia" title="Permalink to this headline">#</a></h1>
+<h1><span class="section-number">2. </span>Implementasi pseudo-code ke dalam Julia<a class="headerlink" href="#implementasi-pseudo-code-ke-dalam-julia" title="Permalink to this headline">#</a></h1>
 <section id="contoh-1">
-<h2>Contoh 1<a class="headerlink" href="#contoh-1" title="Permalink to this headline">#</a></h2>
+<h2><span class="section-number">2.1. </span>Contoh 1<a class="headerlink" href="#contoh-1" title="Permalink to this headline">#</a></h2>
 <p>Contoh ini diambil dari <code class="docutils literal notranslate"><span class="pre">Burden,</span> <span class="pre">Numerical</span> <span class="pre">Analysis</span> <span class="pre">9th</span> <span class="pre">Edition</span></code>. Suatu Taylor polynomial ke-<span class="math notranslate nohighlight">\(N\)</span> untuk <span class="math notranslate nohighlight">\(f(x)=\ln(x)\)</span> dengan <span class="math notranslate nohighlight">\(x_0=1\)</span> adalah</p>
 <div class="math notranslate nohighlight">
 \[
@@ -435,7 +440,7 @@ P_N(x) = \sum_{i=1}^{N} \frac{(-1)^i+1}{i} (x-1)^i,
 \lvert A - A_N \rvert \leq \lvert a_{N+1} \rvert
 \]</div>
 <div class="literal-block-wrapper docutils container" id="pseudo-code-ln">
-<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">Pseudo-code Contoh 1.</span><a class="headerlink" href="#pseudo-code-ln" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-number">Listing 2.1 </span><span class="caption-text">Pseudo-code Contoh 1.</span><a class="headerlink" href="#pseudo-code-ln" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>INPUT: nilai x, toleransi TOL, iterasi maksimum M.
 OUTPUT: polynomial derajat N atau pesan gagal.
 
@@ -462,7 +467,7 @@ Step 6 OUTPUT(&#39;Method Failed&#39;);
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="pseudo-code-julia">
-<div class="code-block-caption"><span class="caption-number">Listing 2 </span><span class="caption-text">Julia-code Contoh 1.</span><a class="headerlink" href="#pseudo-code-julia" title="Permalink to this code">#</a></div>
+<div class="code-block-caption"><span class="caption-number">Listing 2.2 </span><span class="caption-text">Julia-code Contoh 1.</span><a class="headerlink" href="#pseudo-code-julia" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Input</span>
 <span class="n">x</span> <span class="o">=</span> <span class="mf">1.5</span>
 <span class="n">TOL</span> <span class="o">=</span> <span class="mf">1e-5</span>
@@ -574,13 +579,13 @@ Step 6 OUTPUT(&#39;Method Failed&#39;);
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Sistem Bilangan Floating-Point</p>
+            <p class="prev-next-title"><span class="section-number">1. </span>Sistem Bilangan Floating-Point</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="../pertemuan_5.1/interpolasi-Copy1.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Interpolasi</p>
+        <p class="prev-next-title"><span class="section-number">3. </span>Interpolasi</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>
