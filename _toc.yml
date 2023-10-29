@@ -15,6 +15,8 @@ parts:
       title: Masalah Interpolasi dan Interpolasi Polynomial
     - file: notebooks/pertemuan_5/poly_lagrange
       title: Interpolasi Lagrange
+    - file: notebooks/pertemuan_5/poly_newton
+      title: Interpolasi Newton
     - file: notebooks/pertemuan_6/error_in_interpolation
       title: Error dalam Interpolasi
     - file: notebooks/pertemuan_6/interpolasi_chebyshev
