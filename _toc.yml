@@ -21,6 +21,8 @@ parts:
       title: Error dalam Interpolasi
     - file: notebooks/pertemuan_6/interpolasi_chebyshev
       title: Chebyshev Nodes
+    - file: notebooks/pertemuan_8/eliminasi_gauss
+      title: Eliminasi Gauss
   - caption: Latihan-Latihan
     chapters:
     - file: notebooks/Tugas_1/Tugas_1
