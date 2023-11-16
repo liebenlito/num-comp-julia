@@ -1,0 +1,909 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>9. Eliminasi Gauss dengan Scaled Partial Pivoting &#8212; Metode Numerik dengan Julia</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Tugas 1" href="../Tugas_1/Tugas_1.html" />
+    <link rel="prev" title="8. Solusi Numerik untuk Sistem Persamaan Linear" href="eliminasi_gauss.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Metode Numerik dengan Julia</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    Soon..
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Daftar isi
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_2/bilangan_floating-point.html">
+   1. Sistem Bilangan Floating-Point
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_4/taylor_polynomial_1.html">
+   2. Algoritma dan Pseudocode dengan Julia
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_5.1/interpolasi-Copy1.html">
+   3. Masalah Interpolasi dan Interpolasi Polynomial
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_5/poly_lagrange.html">
+   4. Interpolasi Lagrange
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_5/poly_newton.html">
+   5. Interpolasi Newton
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_6/error_in_interpolation.html">
+   6. Error dalam Interpolasi
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_6/interpolasi_chebyshev.html">
+   7. Chebyshev Nodes
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="eliminasi_gauss.html">
+   8. Eliminasi Gauss
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   9. Eliminasi Gauss dengan Scaled Partial Pivoting
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Latihan-Latihan
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Tugas_1/Tugas_1.html">
+   Latihan 1
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../pertemuan_7/latihan2.html">
+   Latihan 2
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Lampiran
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../Julia%20cheatsheet.html">
+   Pengenalan Julia
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Referensi
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../references.html">
+   Referensi
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/liebenlito/num_comp_julia/main?urlpath=tree/docs/notebooks/pertemuan_8/eliminasi_gauss_scaled_pivoting.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/liebenlito/num_comp_julia"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/liebenlito/num_comp_julia/issues/new?title=Issue%20on%20page%20%2Fnotebooks/pertemuan_8/eliminasi_gauss_scaled_pivoting.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/notebooks/pertemuan_8/eliminasi_gauss_scaled_pivoting.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contoh-1">
+   9.1. Contoh 1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementasi-di-julia">
+   9.2. Implementasi di Julia
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contoh-2">
+   9.3. Contoh 2
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Eliminasi Gauss dengan Scaled Partial Pivoting</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contoh-1">
+   9.1. Contoh 1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#implementasi-di-julia">
+   9.2. Implementasi di Julia
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#contoh-2">
+   9.3. Contoh 2
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="eliminasi-gauss-dengan-scaled-partial-pivoting">
+<h1><span class="section-number">9. </span>Eliminasi Gauss dengan Scaled Partial Pivoting<a class="headerlink" href="#eliminasi-gauss-dengan-scaled-partial-pivoting" title="Permalink to this headline">#</a></h1>
+<p>kita lihat SPL berikut</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_1: a_{11} x_1 + a_{12} x_2 &amp;=&amp; b_1 \\
+E_2: a_{21} x_1 + a_{22} x_2 &amp;=&amp; b_2
+\end{array}
+\end{split}\]</div>
+<p>Asumsikan bahwa kita telah mendapatkan nilai dari <span class="math notranslate nohighlight">\(x_2\)</span> dan mengandung error pembulatan (round-off error), <span class="math notranslate nohighlight">\(\hat{x}_2 = x_2 + \varepsilon_2\)</span>. Kemudian kita hitung <span class="math notranslate nohighlight">\(x_1\)</span> dengan <span class="math notranslate nohighlight">\(\hat{x}_2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+  \hat{x}_1 &amp;=&amp; \frac{1}{a_{11}}(b_1 - a_{12}\hat{x}_2)\\
+            &amp;=&amp; \frac{1}{a_{11}}(b_1 - a_{12}x_2 - a_{12}\varepsilon_2)\\
+            &amp;=&amp; \frac{1}{a_{11}}(b_1 - a_{12}x_2) - \frac{a_{12}}{a_{11}} \varepsilon_2\\
+            &amp;=&amp; x_1 - \varepsilon_1
+\end{array}
+\end{split}\]</div>
+<p>dengan demikian kita dapatkan <span class="math notranslate nohighlight">\(\varepsilon_1 = \frac{a_{12}}{a_{11}} \varepsilon_2\)</span>. Error di <span class="math notranslate nohighlight">\(x_2\)</span> terpropagasi dengan suatu faktor <span class="math notranslate nohighlight">\(\frac{a_{12}}{a_{11}}\)</span>. Kasus ini disebut juga dengan <strong>error terpropagasi (propagated error)</strong>. Untuk menghasilkan hasil yang terbaik, kita menginginkan nilai dari <span class="math notranslate nohighlight">\(|a_{11}|\)</span> sebesar mungkin.</p>
+<p>Untuk menghindari hal tersebut, kita memerlukan <strong>penukaran baris</strong> di A.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">eliminasi_gauss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="n">A_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hcat</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c"># jumlah baris dari A</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">A_c</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c"># eliminasi maju</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">]</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">            </span><span class="n">faktor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">pivot</span>
+<span class="w">            </span><span class="n">A_c</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">faktor</span><span class="w"> </span><span class="o">.*</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">]</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c"># subtitusi mundur</span>
+<span class="w">    </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="w"> </span><span class="k">end</span><span class="p">]</span>
+<span class="w">    </span><span class="n">b</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="w"> </span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A_c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">]</span>
+<span class="w">        </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">A_c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">.*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">])</span>
+<span class="w">        </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">pivot</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">b</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>eliminasi_gauss (generic function with 1 method)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1e-17</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{Int64}:
+ -1
+  3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># Tukar baris</span>
+<span class="n">A</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="o">:</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="o">:</span><span class="p">]</span>
+<span class="n">b</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;A = &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;b = &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A = [1.0 2.0; 1.0e-17 -1.0]b = 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[3, -1]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eliminasi_gauss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{Float64}:
+ 1.0
+ 1.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Dari kasus tersebut, kita memerlukan teknik <strong>scaled partial pivoting</strong>. Idenya adalah mencari skala terbesar dari masing-masing koefisien di setiap persamaan,  <span class="math notranslate nohighlight">\(max_{k \leq i \leq n} |a_{ik}|\)</span> untuk <span class="math notranslate nohighlight">\(a_{ii}\)</span>, kemudian cari mana baris yang memiliki skala terbesar dan lakukan penukaran baris. Untuk lebih jelasnya, kita lihat algoritma berikut:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>Algoritma: Eliminasi_Gauss_Scaled_Pivoting(A, b)
+
+INPUT: A` adalah matriks augmented [A,b], n adalah ukuran dari A.
+OUTPUT: variabel x 
+
+1. Mencari skala terbesar dari setiap baris 
+
+for i=1 to n
+      s[i] = max(|a[i,j]|), j = 1,2,..,n
+      if s[i] == 0
+          print(&#39;tidak ada solusi tunggal&#39;)
+
+for i=1 to n
+  2. Mencari indeks dari baris yang memiliki skala terbesar dan lakukan penukaran baris:
+
+  for i=1 to n-1
+      p = argmax(|a[k, i]|/s[i]), k = 1,2,...,n (mencari indeks)
+      if p ~= i
+          A`[[i,p]] &lt;=&gt; A`[[p,i]] (lakukan penukaran baris)
+          s[i] &lt;=&gt; s[p] (lakukan penukaran nilai skala)
+  3. Selanjutnya, lakukan eliminasi maju seperti pada algoritma sebelumnya.
+
+4. Lakukan subtitusi mundur.
+</pre></div>
+</div>
+<section id="contoh-1">
+<h2><span class="section-number">9.1. </span>Contoh 1<a class="headerlink" href="#contoh-1" title="Permalink to this headline">#</a></h2>
+<p>Diberikan SPL</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_1: &amp; x_1 &amp;+&amp; 2x_2 &amp;+&amp; x_3 &amp;=&amp; 3, \\
+E_2: &amp; 3x_1 &amp;+&amp; 4x_2 &amp;+&amp;  &amp;=&amp; 3, \\
+E_3: &amp; 2x_1 &amp;+&amp; 10x_2 &amp;+&amp; 4x_3 &amp;=&amp; 10, \\
+\end{array}
+\end{split}\]</div>
+<p>Dari SPL tersebut, pertama kita cari skala terbesar di setiap baris/persamaan.
+Untuk baris pertama <span class="math notranslate nohighlight">\(E_1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+s_1 &amp;=&amp; \max_{1 \leq j \leq n} |a_{1j}|\\
+     &amp;=&amp; \max \{1, 2, 1\} \\
+     &amp;=&amp; 2
+\end{array}
+\end{split}\]</div>
+<p>baris kedua <span class="math notranslate nohighlight">\(E_2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+s_2 &amp;=&amp; \max_{1 \leq j \leq n} |a_{2j}|\\
+     &amp;=&amp; \max \{3, 4, 0\} \\
+     &amp;=&amp; 4
+\end{array}
+\end{split}\]</div>
+<p>dan, baris ketiga <span class="math notranslate nohighlight">\(E_3\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+s_3 &amp;=&amp; \max_{1 \leq j \leq n} |a_{3j}|\\
+     &amp;=&amp; \max \{2, 10, 4\} \\
+     &amp;=&amp; 10.
+\end{array}
+\end{split}\]</div>
+<p>Kemudian kita cari baris yang akan ditukar:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{a_{11}}{s_1} = \frac{1}{2}, \frac{a_{21}}{s_2} = \frac{3}{4}, \frac{a_{31}}{s_3} = \frac{2}{10} \rightarrow i=2
+\]</div>
+<p>dari sini kita dapatkan bahwa baris kedua <span class="math notranslate nohighlight">\(E_2\)</span> yang memiliki nilai terbesar. Dengan demikian, lakukan penukaran <span class="math notranslate nohighlight">\(E_1 \leftrightarrow E_2\)</span>. Sehingga SPLnya menjadi</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_1: &amp; 3x_1 &amp;+&amp; 4x_2 &amp;+&amp;  &amp;=&amp; 3, \\
+E_2: &amp; x_1 &amp;+&amp; 2x_2 &amp;+&amp; x_3 &amp;=&amp; 3, \\
+E_3: &amp; 2x_1 &amp;+&amp; 10x_2 &amp;+&amp; 4x_3 &amp;=&amp; 10, \\
+\end{array}
+\end{split}\]</div>
+<p>Kemudian kita lakukan eliminasi maju untuk mengeliminasi <span class="math notranslate nohighlight">\(x_1\)</span> dari <span class="math notranslate nohighlight">\(E_2\)</span> dan <span class="math notranslate nohighlight">\(E_3\)</span></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\((E_2 - \frac{1}{3} E_1) \rightarrow (E_2)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\((E_3 - \frac{2}{3} E_1) \rightarrow (E_3)\)</span>.</p></li>
+</ul>
+<p>Sehingga didapat SPL baru, yaitu</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_2: &amp; 3x_1 &amp;+&amp; 4x_2 &amp;+&amp;  &amp;=&amp; 3, \\
+E_1: &amp;  &amp;&amp; \frac{2}{3}x_2 &amp;+&amp; x_3 &amp;=&amp; 2, \\
+E_3: &amp;  &amp;&amp; \frac{22}{3}x_2 &amp;+&amp; 4x_3 &amp;=&amp; 8, \\
+\end{array}
+\end{split}\]</div>
+<p>dan kita cari lagi baris yang akan ditukar dari SPL baru tersebut:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{a_{12}}{s_1} = \frac{2/3}{2} = \frac{1}{3}, \frac{a_{32}}{s_3} = \frac{22/3}{10} = \frac{22}{30} \rightarrow i=3
+\]</div>
+<p>sehingga kita tukar <span class="math notranslate nohighlight">\(E_1 \leftrightarrow E_3\)</span>, maka didapat SPL baru selanjutnya</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_2: &amp; 3x_1 &amp;+&amp; 4x_2 &amp;+&amp;  &amp;=&amp; 3, \\
+E_3: &amp;  &amp;&amp; \frac{22}{3}x_2 &amp;+&amp; 4x_3 &amp;=&amp; 8, \\
+E_1: &amp;  &amp;&amp; \frac{2}{3}x_2 &amp;+&amp; x_3 &amp;=&amp; 2, \\
+\end{array}
+\end{split}\]</div>
+<p>dan lakukan eliminasi maju untuk mengeliminasi <span class="math notranslate nohighlight">\(x_2\)</span> dari <span class="math notranslate nohighlight">\(E_1\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\((E_1 - \frac{1}{11} E_3) \rightarrow (E_1)\)</span></p></li>
+</ul>
+<p>sehingga didapatkan SPL:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_2: &amp; 3x_1 &amp;+&amp; 4x_2 &amp;+&amp;  &amp;=&amp; 3, \\
+E_3: &amp;  &amp;&amp; \frac{22}{3}x_2 &amp;+&amp; 4x_3 &amp;=&amp; 8, \\
+E_1: &amp;  &amp;&amp;  &amp;&amp; \frac{7}{11}x_3 &amp;=&amp; \frac{14}{11}, \\
+\end{array}
+\end{split}\]</div>
+<p>Kemudian lakukan subtitusi mundur, sehingga didapatkan <span class="math notranslate nohighlight">\(x_1 = 1, x_2 = 0, x_3 = 2\)</span>.</p>
+</section>
+<section id="implementasi-di-julia">
+<h2><span class="section-number">9.2. </span>Implementasi di Julia<a class="headerlink" href="#implementasi-di-julia" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">eliminasi_gauss_scaled_pivoting</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="w">    </span><span class="n">scaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="o">:</span><span class="p">]))</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">]</span><span class="w">  </span><span class="c"># Lakukan penskalaan pada masing-masing baris</span>
+<span class="w">    </span><span class="n">perm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span><span class="w">  </span><span class="c"># inisialisasi vektor permutasi</span>
+
+<span class="w">    </span><span class="c"># Eliminasi maju</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">        </span><span class="c"># Cari pivot </span>
+<span class="w">        </span><span class="n">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">k</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">scaling</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">pivot</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">scaling</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">pivot</span><span class="p">]])</span>
+<span class="w">                </span><span class="n">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="n">perm</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="w"> </span><span class="n">perm</span><span class="p">[</span><span class="n">pivot</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">perm</span><span class="p">[</span><span class="n">pivot</span><span class="p">],</span><span class="w"> </span><span class="n">perm</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w">  </span><span class="c"># Tukar baris di dalam vektor permutasi</span>
+
+<span class="w">        </span><span class="c"># Eliminasi</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+<span class="w">            </span><span class="n">faktor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="p">]</span>
+<span class="w">            </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="o">:</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">faktor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="w"> </span><span class="n">k</span><span class="o">:</span><span class="n">n</span><span class="p">]</span>
+<span class="w">            </span><span class="n">b</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">faktor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="c"># Subtitusi mundur</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">n</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span>
+<span class="w">        </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">]</span><span class="o">&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">])</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">i</span><span class="p">]</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">x</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>eliminasi_gauss_scaled_pivoting (generic function with 1 method)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1.</span><span class="w"> </span><span class="mf">2.</span><span class="w"> </span><span class="mf">1.</span><span class="p">;</span><span class="w"> </span><span class="mf">3.</span><span class="w"> </span><span class="mf">4.</span><span class="w"> </span><span class="mf">0.</span><span class="p">;</span><span class="w"> </span><span class="mf">2.</span><span class="w"> </span><span class="mf">10.</span><span class="w"> </span><span class="mf">4.</span><span class="p">]</span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">3.</span><span class="p">;</span><span class="w"> </span><span class="mf">3.</span><span class="p">;</span><span class="w"> </span><span class="mf">10.</span><span class="p">]</span>
+<span class="n">sol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eliminasi_gauss_scaled_pivoting</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3-element Vector{Float64}:
+ 1.0
+ 0.0
+ 2.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="contoh-2">
+<h2><span class="section-number">9.3. </span>Contoh 2<a class="headerlink" href="#contoh-2" title="Permalink to this headline">#</a></h2>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{array}{cc}
+E_1: &amp; x_1 &amp;+&amp; 10^{17}x_2 &amp;=&amp; 10^{17}, \\
+E_2: &amp; x_1 &amp;+&amp; 10^{-17}x_2 &amp;=&amp; 1, \\
+\end{array}
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1.</span><span class="w"> </span><span class="mf">1e17</span><span class="p">;</span><span class="w"> </span><span class="mf">1.</span><span class="w"> </span><span class="mf">1e-17</span><span class="p">]</span>
+<span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1e17</span><span class="p">;</span><span class="w"> </span><span class="mf">1.</span><span class="p">];</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A: &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b: &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A: [1.0 1.0e17; 1.0 1.0e-17]
+b: 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.0e17, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">LinearAlgebra</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Condition number dari A: &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cond</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Determinan dari A: &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Condition number dari A: 9.999999999999997e16
+Determinan dari A: -1.0e17
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eliminasi_gauss</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{Float64}:
+ 0.0
+ 1.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eliminasi_gauss_scaled_pivoting</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{Float64}:
+ 1.0
+ 1.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.9"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.9",
+            path: "./notebooks/pertemuan_8"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.9'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="eliminasi_gauss.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">8. </span>Solusi Numerik untuk Sistem Persamaan Linear</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../Tugas_1/Tugas_1.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tugas 1</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Muhaza Liebenlito<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
