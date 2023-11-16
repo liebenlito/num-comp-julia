@@ -23,6 +23,8 @@ parts:
       title: Chebyshev Nodes
     - file: notebooks/pertemuan_8/eliminasi_gauss
       title: Eliminasi Gauss
+    - file: notebooks/pertemuan_8/eliminasi_gauss_scaled_pivoting
+      title: Eliminasi Gauss dengan Scaled Partial Pivoting
   - caption: Latihan-Latihan
     chapters:
     - file: notebooks/Tugas_1/Tugas_1
